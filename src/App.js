@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import './App.css';
 import $ from 'jquery';
 import Poster from './Poster';
+import SearchBar from './SearchBar';
+
 
 class App extends Component {
 
@@ -16,6 +18,7 @@ class App extends Component {
         this.state = {
             moviePosters:[]
         }
+        this.handleSearch = this.handleSearch.bind(this);
     }
 // componentDidMount runs AFTER the first render
     componentDidMount(){
@@ -33,8 +36,19 @@ class App extends Component {
           // NEVER EVER change states directly
           // this is very BAD!!! It creates a mutation and WE are not allowed to do that
           // this.state.moviePosters = movieData.results
+      });
+  }
+
+  handleSearch(value){
+      var url = 'https://api.themoviedb.org/3/search/movie?api_key=fec8b5ab27b292a68294261bb21b04a5&query='+value
+      $.getJSON(url, (movieData)=>{
+          console.log(movieData);
+          this.setState({
+              moviePosters:movieData.results
+          })
       })
   }
+
 // EVERY component must have a render member method
   render() {
     var postersArray = [];
@@ -44,7 +58,7 @@ class App extends Component {
     //   first time through render, this will be an empty array
       // second time through (after componentDidMount), it wont be empty
     this.state.moviePosters.map((poster,index)=>{
-        console.log(poster);
+        // console.log(poster);
         postersArray.push(<Poster poster={poster} key={index} />)
         return
     });
@@ -61,6 +75,7 @@ class App extends Component {
       <div className="App">
 
         <h1>This is the movie app (again...)</h1>
+        <SearchBar searchFunction={this.handleSearch}/>
           {postersArray}
 
       </div>
